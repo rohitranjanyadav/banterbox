@@ -117,4 +117,82 @@ export const logoutUser = async (req, res) => {
   res.json({ message: "Logged out successfully" });
 };
 
+export const profileUser = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(400).json({
+        success: false,
+        message: "User not found!",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      user,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Something went wrong with get user profile",
+    });
+  }
+};
+
+export const getUserById = async (req, res) => {
+  try {
+    const userId = req.params;
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(400).json({
+        success: false,
+        message: "User not found!",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      user,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Something went wrong with get user by id",
+    });
+  }
+};
+
+export const updateProfile = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const { name, username, email, phone, bio } = req.body;
+
+    const updateData = {};
+
+    if (name) userData.name = name;
+    if (username) userData.username = username;
+    if (email) userData.email = email;
+    if (phone) userData.phone = phone;
+    if (bio) userData.bio = bio;
+
+    const updatedUser = await User.findByIdAndUpdate(userId, updateData, {
+      new: true,
+    }).select("-password");
+
+    res.status(200).json({
+      success: true,
+      message:"User profile updated successfully",
+      user: updatedUser,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Something went wrong with update profile",
+    });
+  }
+};
+
 
