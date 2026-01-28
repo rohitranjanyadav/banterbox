@@ -1,6 +1,7 @@
 import User from "../models/user.model.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import cloudinary from "../config/cloudinary.js";
 
 const generateToken = (res, user) => {
   const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, {
@@ -184,7 +185,7 @@ export const updateProfile = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      message:"User profile updated successfully",
+      message: "User profile updated successfully",
       user: updatedUser,
     });
   } catch (error) {
@@ -195,4 +196,41 @@ export const updateProfile = async (req, res) => {
   }
 };
 
+export const updateProfileImage = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const profileImage = req.file?.path;
+    const publicId = req.file?.filename || req.file?.public_id;
+    console.log("req.file: ", req.file);
 
+    if (!profileImage || !publicId) {
+      return res.status(400).json({
+        success: false,
+        message: "No file uploaded!",
+      });
+    }
+
+    const user = await User.findById(userId).select("-password");
+
+    // Delete old profile image if already exists
+    if (user?.profileImagePublicId) {
+      await cloudinary.uploader.destroy(user.profileImagePublicId);
+    }
+
+    user.profileImage = profileImage;
+    user.profileImagePublicId = profileImagePublicId;
+
+    await user.save();
+
+    res.status(200).json({
+      success: true,
+      message: "User profile image updated successfully",
+      user,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Something went wrong with update profile",
+    });
+  }
+};
