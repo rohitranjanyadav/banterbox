@@ -4,14 +4,10 @@ import cloudinary from "../config/cloudinary.js";
 
 const storage = new CloudinaryStorage({
   cloudinary,
-  params: async (req, file) => {
-    const fileType = file.mimetype.startsWith("video") ? "video" : "image";
-    return {
-      folder: "banter_box",
-      resource_type: fileType,
-      public_id: Date.now().toString(),
-    };
-  },
+  params: async (req, file) => ({
+    folder: "banter_box",
+    public_id: `${Date.now()}-${file.originalname}`,
+  }),
 });
 
 const uploadToCloudinary = multer({ storage });

@@ -20,6 +20,8 @@ export const registerUser = async (req, res) => {
   try {
     const { username, email, password } = req.body;
 
+    console.log("req.body :", req.body);
+
     if (!username) {
       return res.status(422).json({ message: "Username is required!!!" });
     }
@@ -121,7 +123,7 @@ export const logoutUser = async (req, res) => {
 export const profileUser = async (req, res) => {
   try {
     const userId = req.user._id;
-    const user = await User.findById(userId);
+    const user = await User.findById(userId).select("-password");
 
     if (!user) {
       return res.status(400).json({
@@ -145,7 +147,7 @@ export const profileUser = async (req, res) => {
 export const getUserById = async (req, res) => {
   try {
     const userId = req.params.id;
-    const user = await User.findById(userId);
+    const user = await User.findById(userId).select("-password");
 
     if (!user) {
       return res.status(400).json({
@@ -168,16 +170,16 @@ export const getUserById = async (req, res) => {
 
 export const updateProfile = async (req, res) => {
   try {
-    const userId = req.user._id;
+    const userId = req.user?._id;
     const { name, username, email, phone, bio } = req.body;
 
     const updateData = {};
 
-    if (name) userData.name = name;
-    if (username) userData.username = username;
-    if (email) userData.email = email;
-    if (phone) userData.phone = phone;
-    if (bio) userData.bio = bio;
+    if (name) updateData.name = name;
+    if (username) updateData.username = username;
+    if (email) updateData.email = email;
+    if (phone) updateData.phone = phone;
+    if (bio) updateData.bio = bio;
 
     const updatedUser = await User.findByIdAndUpdate(userId, updateData, {
       new: true,
@@ -198,7 +200,7 @@ export const updateProfile = async (req, res) => {
 
 export const updateProfileImage = async (req, res) => {
   try {
-    const userId = req.user._id;
+    const userId = req.user?._id;
     const profileImage = req.file?.path;
     const publicId = req.file?.filename || req.file?.public_id;
     console.log("req.file: ", req.file);
@@ -214,11 +216,11 @@ export const updateProfileImage = async (req, res) => {
 
     // Delete old profile image if already exists
     if (user?.profileImagePublicId) {
-      await cloudinary.uploader.destroy(user.profileImagePublicId);
+      await cloudinary.uploader.destroy(user?.profileImagePublicId);
     }
 
     user.profileImage = profileImage;
-    user.profileImagePublicId = profileImagePublicId;
+    user.profileImagePublicId = publicId;
 
     await user.save();
 
