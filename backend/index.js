@@ -4,9 +4,10 @@ import cookieParser from "cookie-parser";
 import "dotenv/config";
 import userRouter from "./routes/user.routes.js";
 import messageRouter from "./routes/message.routes.js";
+import connectDb from "./config/db.js";
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 
 // Middleware
 app.use(express.json());
@@ -22,5 +23,6 @@ app.use("/api/user", userRouter);
 app.use("/api/message", messageRouter);
 
 app.listen(port, () => {
+  connectDb()
   console.log(`Server is listening on port: ${port}`);
 });
