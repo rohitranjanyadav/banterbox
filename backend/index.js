@@ -3,6 +3,7 @@ import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
 import "dotenv/config";
 import userRouter from "./routes/user.routes.js";
+import messageRouter from "./routes/message.routes.js";
 
 const app = express();
 const port = 3000;
@@ -18,6 +19,7 @@ app.get("/", (req, res) => {
 
 // Routers
 app.use("/api/user", userRouter);
+app.use("/api/message", messageRouter);
 
 app.listen(port, () => {
   console.log(`Server is listening on port: ${port}`);
