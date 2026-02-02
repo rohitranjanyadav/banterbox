@@ -34,7 +34,6 @@ const Login = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-black via-zinc-900 to-black px-4 sm:px-6 text-white">
       <div className="relative w-full max-w-5xl rounded-3xl overflow-hidden bg-white/5 backdrop-blur-2xl shadow-[0_20px_60px_rgba(0,0,0,0.8)] flex flex-col md:flex-row">
-        
         {/* LEFT SECTION */}
         <div className="hidden md:flex md:w-1/2 relative items-center justify-center p-10">
           <div className="absolute inset-0 bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 opacity-90"></div>
